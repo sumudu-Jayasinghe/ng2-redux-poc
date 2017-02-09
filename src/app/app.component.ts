@@ -1,21 +1,37 @@
 import {Component, OnInit} from '@angular/core';
-import {IdentityReducer} from "./data-store/reducers/identity-reducer";
-import {IncrementAction, DecrementAction} from "./data-store/actions/identity-actions";
+import { IAppStore} from "./data-store/models";
+import {Store} from '@ngrx/store';
+import {INCREMENT, THREE} from "./data-store/reducers/identity-reducer";
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit{
-  title = 'app works!';
+export class AppComponent implements OnInit {
+    constructor(private store: Store<IAppStore>) {
 
-  constructor(private s: IdentityReducer) {
-    this.s = s;
-  }
+    }
 
-  ngOnInit(): void {
-    console.log(this.s.invoke(10,new IncrementAction(10)));
-    console.log(this.s.invoke(9,new DecrementAction()));
-  }
+    ngOnInit(): void {
+       this.store.select('Counter').subscribe((val)=>{
+           alert('counter - ' +val);
+       });
+
+       this.store.select('Multi').subscribe((val)=>{
+           alert('multi -'+ val);
+       });
+
+       this.store.subscribe((val)=>{
+           console.log('APP '+ JSON.stringify(val));
+       })
+    }
+
+    onClick() {
+        this.store.dispatch({type:INCREMENT});
+    }
+
+    onClickMulti(){
+        this.store.dispatch({type:THREE});
+    }
 }
